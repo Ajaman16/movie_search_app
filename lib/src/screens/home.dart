@@ -17,7 +17,7 @@ class _HomeState extends State<Home> {
   List<Movie> list = List();
   bool hasLoaded = true;
 
-  final PublishSubject subject = PublishSubject<String>();
+   final PublishSubject subject = PublishSubject<String>();
 
 
   @override
