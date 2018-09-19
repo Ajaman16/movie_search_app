@@ -5,7 +5,6 @@ import 'package:movie_search_app/src/widget/movie_list_tile.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/movie_model.dart';
 import '../constants.dart';
-import '../database/movie_db.dart';
 
 
 class Home extends StatefulWidget {
@@ -17,7 +16,6 @@ class _HomeState extends State<Home> {
 
   List<Movie> list = List();
   bool hasLoaded = true;
-  MovieDb db;
 
   final PublishSubject subject = PublishSubject<String>();
 
@@ -25,8 +23,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    db = MovieDb();
-    db.initDb();
     subject.stream.debounce(Duration(milliseconds: 400)).listen(searchMovies);
   }
 
@@ -80,18 +76,13 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    db.closeDb();
     subject.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Movie App"),
-      ),
-      body: Container(
+    return Container(
         padding: EdgeInsets.all(10.0),
         child: Column(
           children: <Widget>[
@@ -112,14 +103,13 @@ class _HomeState extends State<Home> {
                   //padding: EdgeInsets.all(10.0),
                   itemCount: list.length,
                   itemBuilder: (context, index){
-                    return MovieListTile(movie: list[index], db: db,);
+                    return MovieListTile(movie: list[index]);
                   }
                 )
             )
 
           ],
         ),
-      ),
     );
   }
 

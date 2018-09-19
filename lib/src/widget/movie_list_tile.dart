@@ -7,9 +7,8 @@ import '../constants.dart';
 class MovieListTile extends StatefulWidget {
 
   final Movie movie;
-  final MovieDb db;
 
-  MovieListTile({this.movie, this.db});
+  MovieListTile({this.movie});
 
   @override
   _MovieListTileState createState() => _MovieListTileState();
@@ -18,13 +17,29 @@ class MovieListTile extends StatefulWidget {
 class _MovieListTileState extends State<MovieListTile> {
 
   Movie movie;
-  MovieDb db;
 
   @override
   void initState() {
     super.initState();
-    db = widget.db;
     movie = widget.movie;
+
+    MovieDb db = MovieDb();
+    db.fetchMovie(movie.id).then((m){
+      setState(() {
+        if(m != null)
+          movie.favored = m.favored;
+      });
+    });
+  }
+
+  void onPressed(){
+
+    MovieDb db = MovieDb();
+
+    setState(() {
+      movie.favored = !movie.favored;
+    });
+    movie.favored ? db.addMovie(movie) : db.deleteMovie(movie.id);
   }
 
   @override
@@ -38,13 +53,9 @@ class _MovieListTileState extends State<MovieListTile> {
         leading: IconButton(
             icon: Icon(movie.favored ? Icons.star : Icons.star_border),
             color: Colors.white,
-            onPressed: (){
-              setState(() {
-                movie.favored = !movie.favored;
-              });
-              movie.favored ? db.addMovie(movie) : db.deleteMovie(movie.id);
-            }
+            onPressed: onPressed
         ),
+
         title: Row(
           children: <Widget>[
             movie.posterPath != null
@@ -57,6 +68,7 @@ class _MovieListTileState extends State<MovieListTile> {
 
           ],
         ),
+
         children: <Widget>[
           RichText(
               text: TextSpan(
